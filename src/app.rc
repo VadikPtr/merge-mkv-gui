@@ -2,4 +2,7 @@
 
 #define wxUSE_RC_MANIFEST 1
 #define wxUSE_DPI_AWARE_MANIFEST 2
+
+#ifndef NO_INCLUDE_MANIFEST
 #include "wx/msw/wx.rc"
+#endif

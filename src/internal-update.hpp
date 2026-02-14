@@ -2,32 +2,23 @@
 #include "pch.hpp"
 
 
-class InternalUpdate
-{
+class InternalUpdate {
   int updatesInProgress_ = 0;
 
-public:
+ public:
   bool isUpdateInProgress() const { return updatesInProgress_ != 0; }
   void onUpdate() { ++updatesInProgress_; }
   void onUpdateFinished() { --updatesInProgress_; }
 };
 
 
-class UpdateInProgress
-{
+class UpdateInProgress {
   InternalUpdate& internalUpdate_;
 
-public:
-  explicit UpdateInProgress( InternalUpdate& internalUpdate )
-      : internalUpdate_{ internalUpdate }
-  {
+ public:
+  explicit UpdateInProgress(InternalUpdate& internalUpdate) : internalUpdate_{internalUpdate} {
     internalUpdate_.onUpdate();
   }
 
-  ~UpdateInProgress()
-  {
-    internalUpdate_.onUpdateFinished();
-  }
+  ~UpdateInProgress() { internalUpdate_.onUpdateFinished(); }
 };
-
-

@@ -2,8 +2,7 @@
 #include "pch.hpp"
 
 
-struct RunMkvMergeOptions
-{
+struct RunMkvMergeOptions {
   fs::path                mkvToolnixPath;
   fs::path                outputPath;
   fs::path                mkvPath;
@@ -11,9 +10,8 @@ struct RunMkvMergeOptions
   std::optional<fs::path> audioPath;
 };
 
-struct MkvMergeResult
-{
+struct MkvMergeResult {
   std::optional<const char*> error;
 };
 
-MkvMergeResult runMkvMergeTool( const RunMkvMergeOptions& options );
+MkvMergeResult runMkvMergeTool(const RunMkvMergeOptions& options);

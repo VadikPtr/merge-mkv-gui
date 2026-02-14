@@ -1,7 +1,7 @@
 project(merge-mkv-gui)
 add_executable(${PROJECT_NAME} WIN32)
 
-if(MSVC AND NOT CMAKE_GENERATOR MATCHES "Ninja")
+if(MSVC)
   set(RC_FORMATS *.rc *.manifest)
 else()
   set(RC_FORMATS)
@@ -22,5 +22,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
   LINKER_LANGUAGE CXX
 )
 if (MSVC)
+  if (CMAKE_GENERATOR MATCHES "Ninja")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE -DNO_INCLUDE_MANIFEST)
+  endif()
   target_link_options(${PROJECT_NAME} PRIVATE "LINKER:/MANIFEST:NO")
 endif()

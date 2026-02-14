@@ -3,15 +3,12 @@
 #include "drop-box.hpp"
 #include "internal-update.hpp"
 
-enum class FolderInputFlags
-{
+enum class FolderInputFlags {
   None,
   AskExtension,
 };
 
-class FolderInput : public wxBoxSizer,
-                    public IDropHandler
-{
+class FolderInput : public wxBoxSizer, public IDropHandler {
   fs::path    extension_;
   wxTextCtrl* extensionInput_ = nullptr;
 
@@ -23,19 +20,19 @@ class FolderInput : public wxBoxSizer,
 
   InternalUpdate internalUpdate_;
 
-public:
-  FolderInput( wxWindow* parent, const wxString& title, fs::path extension,
-               FolderInputFlags flags = FolderInputFlags::None );
+ public:
+  FolderInput(wxWindow* parent, const wxString& title, fs::path extension,
+              FolderInputFlags flags = FolderInputFlags::None);
 
   std::vector<fs::path> getFilteredFileList() const;
   fs::path              getBaseDirectory() const { return baseDirectory_; }
-  void                  handleFile( const fs::path& path ) override;
-  void                  handleDirectory( const fs::path& path ) override;
+  void                  handleFile(const fs::path& path) override;
+  void                  handleDirectory(const fs::path& path) override;
   void                  resetDrop() override;
-  wxRect                getBounds() const override { return { GetPosition(), GetSize() }; }
+  wxRect                getBounds() const override { return {GetPosition(), GetSize()}; }
 
-private:
-  void onExtensionUpdate( wxCommandEvent& event );
-  void onDirectoryUpdate( wxCommandEvent& event );
+ private:
+  void onExtensionUpdate(wxCommandEvent& event);
+  void onDirectoryUpdate(wxCommandEvent& event);
   void updateControl();
 };

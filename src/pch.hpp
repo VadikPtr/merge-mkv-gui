@@ -2,7 +2,7 @@
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
-#  include <wx/wx.h>
+  #include <wx/wx.h>
 #endif
 
 #include <wx/log.h>
@@ -49,26 +49,22 @@
 
 namespace fs = std::filesystem;
 
-template<typename TEnum, std::enable_if_t<std::is_enum_v<TEnum>, bool> = true>
-constexpr auto operator*( TEnum s ) -> std::underlying_type_t<TEnum>
-{
-  return static_cast<std::underlying_type_t<TEnum>>( s );
+template <typename TEnum, std::enable_if_t<std::is_enum_v<TEnum>, bool> = true>
+constexpr auto operator*(TEnum s) -> std::underlying_type_t<TEnum> {
+  return static_cast<std::underlying_type_t<TEnum>>(s);
 }
 
-template<typename TEnum, std::enable_if_t<std::is_enum_v<TEnum>, bool> = true>
-constexpr bool operator!( TEnum s )
-{
-  return !static_cast<std::underlying_type_t<TEnum>>( s );
+template <typename TEnum, std::enable_if_t<std::is_enum_v<TEnum>, bool> = true>
+constexpr bool operator!(TEnum s) {
+  return !static_cast<std::underlying_type_t<TEnum>>(s);
 }
 
-template<typename TEnum, std::enable_if_t<std::is_enum_v<TEnum>, bool> = true>
-constexpr auto operator|( TEnum a, TEnum b ) -> TEnum
-{
-  return static_cast<TEnum>( *a | *b );
+template <typename TEnum, std::enable_if_t<std::is_enum_v<TEnum>, bool> = true>
+constexpr auto operator|(TEnum a, TEnum b) -> TEnum {
+  return static_cast<TEnum>(*a | *b);
 }
 
-template<typename TEnum, std::enable_if_t<std::is_enum_v<TEnum>, bool> = true>
-constexpr auto operator&( TEnum a, TEnum b ) -> TEnum
-{
-  return static_cast<TEnum>( *a & *b );
+template <typename TEnum, std::enable_if_t<std::is_enum_v<TEnum>, bool> = true>
+constexpr auto operator&(TEnum a, TEnum b) -> TEnum {
+  return static_cast<TEnum>(*a & *b);
 }
