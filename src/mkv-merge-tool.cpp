@@ -10,6 +10,16 @@ namespace
     std::transform( arguments.begin(), arguments.end(), cmd.begin(),
                     []( const auto& s ) { return s.c_str(); } );
 
+    std::string joinedCmd = "";
+    for( const auto& arg: cmd )
+    {
+      if( arg != nullptr )
+      {
+        joinedCmd = joinedCmd + " " + arg;
+      }
+    }
+    wxLogError( "run mkv merge: %s", joinedCmd.c_str() );
+
     auto subprocess = subprocess_s{};
     if( int result = subprocess_create( cmd.data(), 0, &subprocess ); result != 0 )
       return std::nullopt;
@@ -41,7 +51,7 @@ MkvMergeResult runMkvMergeTool( const RunMkvMergeOptions& options )
   auto arguments = std::vector<std::string>{
       mkvMergePath.string(),
       "-o",
-      ( const char* ) toWxString( options.outputPath ),
+      toStdString( options.outputPath ),
   };
 
   if( options.audioPath )
@@ -49,16 +59,16 @@ MkvMergeResult runMkvMergeTool( const RunMkvMergeOptions& options )
     arguments.emplace_back( "-A" );
   }
 
-  arguments.emplace_back( ( const char* ) toWxString( options.mkvPath ) );
+  arguments.emplace_back( toStdString( options.mkvPath ) );
 
   if( options.subtitlePath )
   {
-    arguments.emplace_back( toWxString( *options.subtitlePath ) );
+    arguments.emplace_back( toStdString( *options.subtitlePath ) );
   }
 
   if( options.audioPath )
   {
-    arguments.emplace_back( toWxString( *options.audioPath ) );
+    arguments.emplace_back( toStdString( *options.audioPath ) );
   }
 
   auto status = runSubprocess( std::move( arguments ) );

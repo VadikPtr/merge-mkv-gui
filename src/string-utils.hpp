@@ -53,4 +53,5 @@ inline TString commonPathSuffix( const std::vector<TString>& strings )
   return commonSuffix;
 }
 
-wxString toWxString( const fs::path& path );
+wxString    toWxString( const fs::path& path );
+std::string toStdString( const fs::path& path );

@@ -10,7 +10,7 @@
 - Чтобы собрать:
   - CMake
   - C++ compiler, should support C++20 standard
-  - [dep](https://github.com/cprkv/dep) - используется в качестве менеджера зависимостей
+  - [depo](https://github.com/cprkv/depo) - используется в качестве менеджера зависимостей
   - `cd deps/wxWidgets; git submodule update --init --recursive`
 - Чтобы запустить:
   - MKVToolNix

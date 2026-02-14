@@ -1,7 +1,7 @@
 project(merge-mkv-gui)
 add_executable(${PROJECT_NAME} WIN32)
 
-if(MSVC)
+if(MSVC AND NOT CMAKE_GENERATOR MATCHES "Ninja")
   set(RC_FORMATS *.rc *.manifest)
 else()
   set(RC_FORMATS)
