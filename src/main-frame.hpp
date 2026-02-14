@@ -8,6 +8,7 @@ class MainFrame : public wxFrame {
   FolderInput* subsFolderInput;
   FolderInput* audioFolderInput;
   wxButton*    processButton_;
+  wxCheckBox*  useOriginalAudio_;
   bool         updateInProgress_{false};
 
  public:
@@ -21,5 +22,6 @@ class MainFrame : public wxFrame {
 };
 
 enum {
-  ID_Process = 1,
+  ID_Process          = 1,
+  ID_UseOriginalAudio = 2,
 };

@@ -1,5 +1,8 @@
 #include "main-frame.hpp"
+#include "pch.hpp"
 #include "process-mkv.hpp"
+#include "wx/msw/checkbox.h"
+#include "wx/sizer.h"
 
 
 namespace {
@@ -60,14 +63,19 @@ MainFrame::MainFrame() : wxFrame{nullptr, wxID_ANY, "merge mkv"} {
     processButton_ = new wxButton{this, ID_Process, wxT("process")};
     Bind(wxEVT_BUTTON, &MainFrame::OnProcess, this, ID_Process);
 
+    wxBoxSizer* processThing = new wxBoxSizer(wxHORIZONTAL);
+    useOriginalAudio_        = new wxCheckBox(this, ID_UseOriginalAudio, wxT("Use original audio"));
+    processThing->Add(useOriginalAudio_, 0, wxCENTRE);
+    processThing->Add(processButton_, 1, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 0);
+
     auto* topBox = new wxBoxSizer{wxVERTICAL};
     topBox->Add(grid, 1, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
-    topBox->Add(processButton_, 0, wxGROW | wxALL, 15);
+    topBox->Add(processThing, 0, wxGROW | wxALL, 15);
     SetSizer(topBox);
 
     SetMinSize(wxSize{1400, 800});
 #ifdef _WIN32
-    SetBackgroundColour(wxColour{"#ffffff"});
+    SetBackgroundColour(wxColour{"#f8f8f8ff"});
 #endif
   }
 
@@ -102,12 +110,14 @@ void MainFrame::OnProcess(wxCommandEvent&) {
   }
   updateInProgress_ = true;
   processButton_->Disable();
+  bool useOriginalAudio = useOriginalAudio_->GetValue();
 
   auto tasks = makeMkvCombineTasks(ProcessMkvInput{
-      .mkvsDirectory = mkvFolderInput->getBaseDirectory(),
-      .mkvs          = std::move(mkvFolderInput->getFilteredFileList()),
-      .subs          = std::move(subsFolderInput->getFilteredFileList()),
-      .audios        = std::move(audioFolderInput->getFilteredFileList()),
+      .mkvsDirectory    = mkvFolderInput->getBaseDirectory(),
+      .mkvs             = std::move(mkvFolderInput->getFilteredFileList()),
+      .subs             = std::move(subsFolderInput->getFilteredFileList()),
+      .audios           = std::move(audioFolderInput->getFilteredFileList()),
+      .useOriginalAudio = useOriginalAudio,
   });
 
   if (!tasks) {

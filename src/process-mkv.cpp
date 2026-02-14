@@ -106,8 +106,11 @@ std::optional<MkvCombineTasks> makeMkvCombineTasks(ProcessMkvInput input) {
   auto tasks = MkvCombineTasks{};
 
   for (const auto& [mkvDiff, mkvPath] : *mkvDiffs) {
-    auto task =
-        MkvCombineTask{.mkvFile = mkvPath, .destination = *destination / mkvPath.filename()};
+    auto task = MkvCombineTask{
+        .mkvFile          = mkvPath,
+        .destination      = *destination / mkvPath.filename(),
+        .useOriginalAudio = input.useOriginalAudio,
+    };
 
     if (subDiffs) {
       if (auto it = subDiffs->find(mkvDiff); it != subDiffs->end()) {
@@ -142,16 +145,17 @@ void runMkvCombine(const fs::path& mkvToolnixPath, const MkvCombineTasks& tasks,
 
   for (size_t i = 0; i < tasks.size(); ++i) {
     auto opts = RunMkvMergeOptions{
-        .mkvToolnixPath = mkvToolnixPath,
-        .outputPath     = tasks[i].destination,
-        .mkvPath        = tasks[i].mkvFile,
-        .subtitlePath   = tasks[i].subFile,
-        .audioPath      = tasks[i].audioFile,
+        .mkvToolnixPath   = mkvToolnixPath,
+        .outputPath       = tasks[i].destination,
+        .mkvPath          = tasks[i].mkvFile,
+        .subtitlePath     = tasks[i].subFile,
+        .audioPath        = tasks[i].audioFile,
+        .useOriginalAudio = tasks[i].useOriginalAudio,
     };
 
     taskFuncs[i] = [opts]() -> TaskResult {
       auto r = runMkvMergeTool(opts);
-      return {.error = r.error};
+      return TaskResult{.error = r.error};
     };
   }
 
@@ -161,11 +165,9 @@ void runMkvCombine(const fs::path& mkvToolnixPath, const MkvCombineTasks& tasks,
   while (true) {
     uint32_t jobRemaining = pool.getJobRemaining();
     notifyRemaining(jobRemaining, (uint32_t)tasks.size());
-
     if (jobRemaining == 0) {
       break;
     }
-
     std::this_thread::sleep_for(std::chrono::milliseconds(40));
   }
 

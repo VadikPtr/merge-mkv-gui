@@ -1,5 +1,6 @@
 #include "mkv-merge-tool.hpp"
 #include "string-utils.hpp"
+#include "wx/log.h"
 #include <subprocess.h>
 
 namespace {
@@ -14,7 +15,7 @@ namespace {
         joinedCmd = joinedCmd + " " + arg;
       }
     }
-    wxLogError("run mkv merge: %s", joinedCmd.c_str());
+    wxLogInfo("run mkv merge: %s", joinedCmd.c_str());
 
     auto subprocess = subprocess_s{};
     if (int result = subprocess_create(cmd.data(), 0, &subprocess); result != 0) {
@@ -38,12 +39,12 @@ namespace {
 
 MkvMergeResult runMkvMergeTool(const RunMkvMergeOptions& options) {
   if (!options.subtitlePath && !options.audioPath) {
-    return {.error = "nothing to merge"};
+    return MkvMergeResult{.error = "nothing to merge"};
   }
 
   auto mkvMergePath = options.mkvToolnixPath / "mkvmerge.exe";
   if (!fs::exists(mkvMergePath)) {
-    return {.error = "mkv toolnix path is invalid"};
+    return MkvMergeResult{.error = "mkv toolnix path is invalid"};
   }
 
   auto arguments = std::vector<std::string>{
@@ -51,7 +52,7 @@ MkvMergeResult runMkvMergeTool(const RunMkvMergeOptions& options) {
       "-o",
       toStdString(options.outputPath),
   };
-  if (options.audioPath) {
+  if (not options.useOriginalAudio and options.audioPath) {
     arguments.emplace_back("-A");
   }
   arguments.emplace_back(toStdString(options.mkvPath));
@@ -60,14 +61,18 @@ MkvMergeResult runMkvMergeTool(const RunMkvMergeOptions& options) {
   }
   if (options.audioPath) {
     arguments.emplace_back(toStdString(*options.audioPath));
+    if (options.useOriginalAudio) {
+      arguments.emplace_back("--default-language");
+      arguments.emplace_back("rus");
+    }
   }
 
   auto status = runSubprocess(std::move(arguments));
   if (!status) {
-    return {.error = "error running mkvmerge"};
+    return MkvMergeResult{.error = "error running mkvmerge"};
   }
   if (*status != 0) {
-    return {.error = "bad mkvmerge exit code"};
+    return MkvMergeResult{.error = "bad mkvmerge exit code"};
   }
-  return {.error = std::nullopt};
+  return MkvMergeResult{.error = std::nullopt};
 }

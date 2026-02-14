@@ -8,6 +8,7 @@ struct RunMkvMergeOptions {
   fs::path                mkvPath;
   std::optional<fs::path> subtitlePath;
   std::optional<fs::path> audioPath;
+  bool                    useOriginalAudio;
 };
 
 struct MkvMergeResult {
